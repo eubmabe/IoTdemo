@@ -11,21 +11,16 @@ var Message = require('azure-iot-device').Message;
 
 var http = require('http');
 
-console.log (myConfig);
-var aa={};
-aa.a=9;
-aa.b=7;
-console.log (aa)
 
 // String containing Hostname, Device Id & Device Key in the following formats:
 //  "HostName=<iothub_host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"
-var connectionString = 'HostName=eubmabeTestHub.azure-devices.net;DeviceId=MyFirstDevice;SharedAccessKey=IIplPmmAjNFRBsLFtU8ZfMhWK0A3Lmk4uoNNgmO+nE4=';
+var connectionString = 'HostName='+config.HostName+';DeviceId='+config.DeviceId+';SharedAccessKey'+config.SharedAccessKey+';'
 var deviceId = ConnectionString.parse(connectionString).DeviceId;
 
 // Sensors data
-var temperature = 50;
-var humidity = 50;
-var externalTemperature = 55;
+var volume = 0;
+var flow = 1;
+var temperature = 20;
 
 // Create IoT Hub client
 var client = Client.fromConnectionString(connectionString, Protocol);
@@ -38,19 +33,17 @@ function printErrorFor(op) {
 }
 
 // Helper function to generate random number between min and max
-function generateRandomIncrement() {
-  return ((Math.random() * 2) - 1);
+function generateRandomIncrement(range) {
+  return ((Math.random() * range) - range/2);
 }
 
 
 var options = {
   hostname: '192.168.10.11',
   port: 80,
-  // path: '/Elvaco-Rest/rest/deviceType/deviceTypeId/',
   path: '/Elvaco-Rest/rest/device/all',
-  //path: '/Elvaco-Rest/rest/mdmdata/all',
   method: 'GET',
-  auth: 'admin:IoT4ever'
+  auth: config.MBUSauth
 };
 
 
@@ -59,7 +52,7 @@ var options = {
 // Send device meta data
 var deviceMetaData = {
   'ObjectType': 'DeviceInfo',
-  'IsSimulatedDevice': 0,
+  'IsSimulatedDevice': 1,
   'Version': '1.0',
   'DeviceProperties': {
     'DeviceID': deviceId,
