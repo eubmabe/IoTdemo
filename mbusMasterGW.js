@@ -23,25 +23,25 @@ var deviceId = ConnectionString.parse(connectionString).DeviceId;
 var sensorVec = [
 {
   'meterName':'Huvudledning','measure':[
-    {'name':'Volym','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
+    {'name':'Volume','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
     {'name':'Flow','sampleTime':Date.now(),'value':3.0,'unit':'m3/h'},
     {'name':'Temperature','sampleTime':Date.now(),'value':10.0,'unit':'C'},
     {'name':'Larm','sampleTime':Date.now(),'value':'','unit':'larm'}]
 },{
   meterName:'HusA',measure:[
-    {'name':'Volym','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
+    {'name':'Volume','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
     {'name':'Flow','sampleTime':Date.now(),'value':0.9,'unit':'m3/h'},
     {'name':'Temperature','sampleTime':Date.now(),'value':17.0,'unit':'C'},
     {'name':'Larm','sampleTime':Date.now(),'value':'','unit':'larm'}]
 },{
   meterName:'HusB',measure:[
-    {'name':'Volym','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
+    {'name':'Volume','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
     {'name':'Flow','sampleTime':Date.now(),'value':1.0,'unit':'m3/h'},
     {'name':'Temperature','sampleTime':Date.now(),'value':18.0,'unit':'C'},
     {'name':'Larm','sampleTime':Date.now(),'value':'','unit':'larm'}]
 },{
   meterName:'HusC',measure:[
-    {'name':'Volym','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
+    {'name':'Volume','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
     {'name':'Flow','sampleTime':Date.now(),'value':1.1,'unit':'m3/h'},
     {'name':'Temperature','sampleTime':Date.now(),'value':19.0,'unit':'C'},
     {'name':'Larm','sampleTime':Date.now(),'value':'','unit':'larm'}]
@@ -157,13 +157,19 @@ client.open(function (err) {
         for (var measureInd=0; measureInd < sensorVec[meterIndex].measure.length; measureInd++) {
           switch (sensorVec[meterIndex].measure[measureInd].name) {
             case 'Volume':
-              sensorVec[meterIndex].measure[measureInd].value += Math.random()*0.007
+              if  (sensorVec[meterIndex].meterName === 'Huvudledning'){
+                sensorVec[meterIndex].measure[measureInd].value += Math.random()*0.007*3;
+                //console.log('vol*3:' + sensorVec[meterIndex].measure[measureInd].value);
+              } else {
+                sensorVec[meterIndex].measure[measureInd].value += Math.random()*0.007;
+                //console.log('vol:' + sensorVec[meterIndex].measure[measureInd].value);
+              }
               break;
             case 'Flow':
-              sensorVec[meterIndex].measure[measureInd].value += generateRandomIncrement (0.1)
+              sensorVec[meterIndex].measure[measureInd].value += generateRandomIncrement (0.1);
               break;
             case 'Temperature':
-              sensorVec[meterIndex].measure[measureInd].value += generateRandomIncrement (0.1)
+              sensorVec[meterIndex].measure[measureInd].value += generateRandomIncrement (0.1);
               break;
             case 'Larm':
               // Do nothing. Larm set and cleared through commands
@@ -185,7 +191,7 @@ client.open(function (err) {
       }
 
 
-      console.log('Sending device event data:\n' + data);
+      console.log('Sending device event data\n',sensorVec);
     }, 12000);
 
 
