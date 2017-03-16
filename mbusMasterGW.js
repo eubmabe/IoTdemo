@@ -18,12 +18,33 @@ var connectionString = 'HostName='+config.HostName+';DeviceId='+config.DeviceId+
 var deviceId = ConnectionString.parse(connectionString).DeviceId;
 
 // Sensors data
-var sensorVec = [{meterName:'Huvudledning',measure:[{name:'Volym',sampleTime:Date.now(),value=0,unit='m3'},{},{},{}]
-// obj->meter[n]->measures[n]->name,sampletime,value,unit
-
-var volume = 0;
-var flow = 1;
-var temperature = 20;
+// One item per meter in the system
+var sensorVec = [
+{
+  'meterName':'Huvudledning','measure':[
+    {'name':'Volym','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
+    {'name':'Flow','sampleTime':Date.now(),'value':3.0,'unit':'m3/h'},
+    {'name':'Temperature','sampleTime':Date.now(),'value':10.0,'unit':'C'},
+    {'name':'Larm','sampleTime':Date.now(),'value':'','unit':'larm'}]
+},{
+  meterName:'HusA',measure:[
+    {'name':'Volym','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
+    {'name':'Flow','sampleTime':Date.now(),'value':0.9,'unit':'m3/h'},
+    {'name':'Temperature','sampleTime':Date.now(),'value':17.0,'unit':'C'},
+    {'name':'Larm','sampleTime':Date.now(),'value':'','unit':'larm'}]
+},{
+  meterName:'HusB',measure:[
+    {'name':'Volym','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
+    {'name':'Flow','sampleTime':Date.now(),'value':1.0,'unit':'m3/h'},
+    {'name':'Temperature','sampleTime':Date.now(),'value':18.0,'unit':'C'},
+    {'name':'Larm','sampleTime':Date.now(),'value':'','unit':'larm'}]
+},{
+  meterName:'HusC',measure:[
+    {'name':'Volym','sampleTime':Date.now(),'value':0.0,'unit':'m3'},
+    {'name':'Flow','sampleTime':Date.now(),'value':1.1,'unit':'m3/h'},
+    {'name':'Temperature','sampleTime':Date.now(),'value':19.0,'unit':'C'},
+    {'name':'Larm','sampleTime':Date.now(),'value':'','unit':'larm'}]
+}]
 
 // Create IoT Hub client
 var client = Client.fromConnectionString(connectionString, Protocol);
@@ -129,8 +150,8 @@ client.open(function (err) {
         var command = JSON.parse(msg.getData());
         // Add all commands above....
         if (command.Name === 'SetTemperature') {
-          temperature = command.Parameters.Temperature;
-          console.log('New temperature set to :' + temperature + 'F');
+          //temperature = command.Parameters.Temperature;
+          console.log('New temperature set to :' + command.Parameters.Temperature + 'F');
         }
 
         client.complete(msg, printErrorFor('complete'));
@@ -142,7 +163,8 @@ client.open(function (err) {
 
     // start event data send routing
     var sendInterval = setInterval(function () {
-      temperature += generateRandomIncrement();
+      for (var meterIndex=0; meterIndex < sensorVec.length; meterIndex++)
+      sensorVec[meterIndex] temperature += generateRandomIncrement();
       externalTemperature += generateRandomIncrement();
       humidity += generateRandomIncrement();
 
