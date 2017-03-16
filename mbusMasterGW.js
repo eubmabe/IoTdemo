@@ -171,7 +171,7 @@ client.open(function (err) {
               printErrorFor('Default in switch error')(sensorVec[meterIndex][measureInd]);
           }
           
-          var data += JSON.stringify({
+          var data = JSON.stringify({
             'meterID':sensorVec[meterIndex].meterName,
             'measure':sensorVec[meterIndex].measure[measureInd].name,
             'sampletime':sensorVec[meterIndex].measure[measureInd].sampleTime,
