@@ -18,6 +18,9 @@ var connectionString = 'HostName='+config.HostName+';DeviceId='+config.DeviceId+
 var deviceId = ConnectionString.parse(connectionString).DeviceId;
 
 // Sensors data
+var sensorVec = [{meterName:'Huvudledning',measure:[{name:'Volym',sampleTime:Date.now(),value=0,unit='m3'},{},{},{}]
+// obj->meter[n]->measures[n]->name,sampletime,value,unit
+
 var volume = 0;
 var flow = 1;
 var temperature = 20;
@@ -52,52 +55,79 @@ var options = {
 // Send device meta data
 var deviceMetaData = {
   'ObjectType': 'DeviceInfo',
-  'IsSimulatedDevice': 1,
+  'IsSimulatedDevice': 0,
   'Version': '1.0',
   'DeviceProperties': {
     'DeviceID': deviceId,
     'HubEnabledState': 1,
-    'CreatedTime': '2015-09-21T20:28:55.5448990Z',
+    'CreatedTime': '2016-03-16T00:28:55.5448990Z',
     'DeviceState': 'normal',
     'UpdatedTime': null,
-    'Manufacturer': 'Contoso Inc.',
-    'ModelNumber': 'MD-909',
-    'SerialNumber': 'SER9090',
-    'FirmwareVersion': '1.10',
+    'Manufacturer': 'Elvaco',
+    'ModelNumber': 'Cme3100',
+    'SerialNumber': 'NA',
+    'FirmwareVersion': 'NA',
     'Platform': 'node.js',
-    'Processor': 'ARM',
+    'Processor': 'NA',
     'InstalledRAM': '64 MB',
-    'Latitude': 47.617025,
-    'Longitude': -122.191285
+    'Latitude': 59.3677785,
+    'Longitude': 17.9922184
   },
   'Commands': [{
     'Name': 'SetTemperature',
     'Parameters': [{
       'Name': 'Temperature',
       'Type': 'double'
+    },{
+      'Name': 'meterID',
+      'Type': 'string'
     }]
-  },
-    {
-      'Name': 'SetHumidity',
-      'Parameters': [{
-        'Name': 'Humidity',
-        'Type': 'double'
-      }]
+  },{
+    'Name': 'SetVolume',
+    'Parameters': [{
+      'Name': 'Volume',
+      'Type': 'double'
+    },{
+      'Name': 'meterID',
+      'Type': 'string'
     }]
+  },{
+    'Name': 'SetLarm',
+    'Parameters': [{
+      'Name': 'Larm',
+      'Type': 'text'
+    },{
+      'Name': 'meterID',
+      'Type': 'string'
+    }]
+  },{
+    'Name': 'SetFlow',
+    'Parameters': [{
+      'Name': 'Flow',
+      'Type': 'double'
+    },{
+      'Name': 'meterID',
+      'Type': 'string'
+    }]
+ }]
 };
 
 client.open(function (err) {
   if (err) {
     printErrorFor('open')(err);
   } else {
+
+    // Send meta data to IoT hub
     console.log('Sending device metadata:\n' + JSON.stringify(deviceMetaData));
     client.sendEvent(new Message(JSON.stringify(deviceMetaData)), printErrorFor('send metadata'));
 
+    // Receive and parse incoming messages
     client.on('message', function (msg) {
       console.log('receive data: ' + msg.getData());
 
       try {
         var command = JSON.parse(msg.getData());
+        // Add all commands above....
         if (command.Name === 'SetTemperature') {
           temperature = command.Parameters.Temperature;
           console.log('New temperature set to :' + temperature + 'F');
@@ -125,7 +155,7 @@ client.open(function (err) {
 
       console.log('Sending device event data:\n' + data);
       client.sendEvent(new Message(data), printErrorFor('send event'));
-    }, 60000);
+    }, 12000);
 
 
     var req = http.request(options, function(res) {
