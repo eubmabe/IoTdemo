@@ -14,7 +14,7 @@ var http = require('http');
 
 // String containing Hostname, Device Id & Device Key in the following formats:
 //  "HostName=<iothub_host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"
-var connectionString = 'HostName='+config.HostName+';DeviceId='+config.DeviceId+';SharedAccessKey'+config.SharedAccessKey+';'
+var connectionString = 'HostName='+myConfig.HostName+';DeviceId='+myConfig.DeviceId+';SharedAccessKey'+myConfig.SharedAccessKey+';'
 var deviceId = ConnectionString.parse(connectionString).DeviceId;
 
 // Sensors data
@@ -199,9 +199,9 @@ client.open(function (err) {
 
 
 //var options = {
-//  hostname: config.MBUShostname,
-//  port: config.MBUSport,
+//  hostname: myConfig.MBUShostname,
+//  port: myConfig.MBUSport,
 //  path: '/Elvaco-Rest/rest/device/all', // Get???
 //  method: 'GET',
-//  auth: config.MBUSauth
+//  auth: myConfig.MBUSauth
 //};
