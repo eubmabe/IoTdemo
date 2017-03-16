@@ -163,38 +163,41 @@ client.open(function (err) {
 
     // start event data send routing
     var sendInterval = setInterval(function () {
-      for (var meterIndex=0; meterIndex < sensorVec.length; meterIndex++)
-      sensorVec[meterIndex] temperature += generateRandomIncrement();
-      externalTemperature += generateRandomIncrement();
-      humidity += generateRandomIncrement();
+      for (var meterIndex=0; meterIndex < sensorVec.length; meterIndex++) {
+        for (var measureInd=0; measureInd < sensorVec[meterIndex].measure.length; measureInd++) {
+          switch (sensorVec[meterIndex].measure[measureInd].name) {
+            case 'Volume':
+              sensorVec[meterIndex].measure[measureInd].value += generateRandomIncrement (0.001)
+              break;
+            case 'Flow':
+              sensorVec[meterIndex].measure[measureInd].value += generateRandomIncrement (0.1)
+              break;
+            case 'Temperature':
+              sensorVec[meterIndex].measure[measureInd].value += generateRandomIncrement (0.1)
+              break;
+            case 'Larm':
+              // Do nothing. Larm set and cleared through commands
+              break;
+            default:
+              printErrorFor('Default in switch error')(sensorVec[meterIndex][measureInd]);
+          }
+          
+          var data += JSON.stringify({
+            'meterID':sensorVec[meterIndex].meterName,
+            'measure':sensorVec[meterIndex].measure[measureInd].name,
+            'sampletime':sensorVec[meterIndex].measure[measureInd].sampleTime,
+            'value':sensorVec[meterIndex].measure[measureInd].value,
+            'unit':sensorVec[meterIndex].measure[measureInd].unit
+          });
+          client.sendEvent(new Message(data), printErrorFor('send event'));
 
-      var data = JSON.stringify({
-        'DeviceID': deviceId,
-        'Temperature': temperature,
-        'Humidity': humidity,
-        'ExternalTemperature': externalTemperature
-      });
+        }
+      }
+
 
       console.log('Sending device event data:\n' + data);
-      client.sendEvent(new Message(data), printErrorFor('send event'));
     }, 12000);
 
-
-    var req = http.request(options, function(res) {
-      console.log('STATUS: ' +  res.statusCode);
-      console.log('HEADERS: ' + JSON.stringify(res.headers));
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-        console.log('BODY: ' + chunk);
-      });
-    });
-
-    req.on('error', function(e) {
-      console.log('problem with request: '+e.message);
-    });
-
-
-    req.end();
 
 
     client.on('error', function (err) {
