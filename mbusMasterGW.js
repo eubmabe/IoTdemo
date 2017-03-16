@@ -14,7 +14,8 @@ var http = require('http');
 
 // String containing Hostname, Device Id & Device Key in the following formats:
 //  "HostName=<iothub_host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"
-var connectionString = 'HostName='+myConfig.HostName+';DeviceId='+myConfig.DeviceId+';SharedAccessKey'+myConfig.SharedAccessKey+';'
+var connectionString = 'HostName='+myConfig.HostName+';DeviceId='+myConfig.DeviceId+';SharedAccessKey='+myConfig.SharedAccessKey+';'
+console.log('connect string: ' + connectionString);
 var deviceId = ConnectionString.parse(connectionString).DeviceId;
 
 // Sensors data
@@ -156,7 +157,7 @@ client.open(function (err) {
         for (var measureInd=0; measureInd < sensorVec[meterIndex].measure.length; measureInd++) {
           switch (sensorVec[meterIndex].measure[measureInd].name) {
             case 'Volume':
-              sensorVec[meterIndex].measure[measureInd].value += generateRandomIncrement (0.001)
+              sensorVec[meterIndex].measure[measureInd].value += Math.random()*0.007
               break;
             case 'Flow':
               sensorVec[meterIndex].measure[measureInd].value += generateRandomIncrement (0.1)
