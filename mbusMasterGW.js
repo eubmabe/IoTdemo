@@ -62,17 +62,6 @@ function generateRandomIncrement(range) {
 }
 
 
-var options = {
-  hostname: '192.168.10.11',
-  port: 80,
-  path: '/Elvaco-Rest/rest/device/all',
-  method: 'GET',
-  auth: config.MBUSauth
-};
-
-
-
-
 // Send device meta data
 var deviceMetaData = {
   'ObjectType': 'DeviceInfo',
@@ -207,3 +196,12 @@ client.open(function (err) {
     });
   }
 });
+
+
+//var options = {
+//  hostname: config.MBUShostname,
+//  port: config.MBUSport,
+//  path: '/Elvaco-Rest/rest/device/all', // Get???
+//  method: 'GET',
+//  auth: config.MBUSauth
+//};
